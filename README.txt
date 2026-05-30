@@ -10,3 +10,5 @@ Files included:
 - assets/jjs_autobody_main.png
 
 Reminder: export the invoice PDF and post it in Discord when finished for records.
+
+https://grade-0.github.io/JJ-s-Autobody-Calculator-v2/
