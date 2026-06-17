@@ -8,3 +8,5 @@ Features:
 - RP-only reminder: do not enter real-life personal information.
 
 All data stays in the browser; contract boards use local browser storage.
+
+https://grade-0.github.io/JJ-s-Autobody-Calculator-v2/
