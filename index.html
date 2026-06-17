@@ -1,0 +1,1533 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JJ's Autobody Compact Invoice & Contracts</title>
+  <link rel="icon" href="assets/jjs_autobody_main.png" />
+  <style>
+    :root {
+      --bg: #08090b;
+      --panel: rgba(13, 15, 18, 0.88);
+      --panel-2: rgba(22, 24, 28, 0.78);
+      --text: #f7f4ee;
+      --muted: #b9b4aa;
+      --line: rgba(255,255,255,0.13);
+      --red: #b70f1c;
+      --red-dark: #730913;
+      --gold: #f7c64a;
+      --green: #75e0a4;
+      --radius: 14px;
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: var(--sans);
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(100deg, rgba(4,5,8,.96), rgba(8,9,12,.82) 45%, rgba(5,5,6,.62)),
+        url("assets/backdrop.jpg") center / cover no-repeat;
+      transform: scale(1.015);
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at top left, rgba(183,15,28,.24), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(247,198,74,.14), transparent 34%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 5px);
+    }
+    .app {
+      width: min(1400px, calc(100% - 18px));
+      margin: 0 auto;
+      padding: 10px 0 24px;
+    }
+    .topbar {
+      display: grid;
+      grid-template-columns: 76px minmax(230px, 1fr) minmax(340px, 520px);
+      gap: 12px;
+      align-items: center;
+      min-height: 92px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(10,11,14,.92), rgba(25,20,18,.72));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 8px;
+      z-index: 20;
+      overflow: hidden;
+    }
+    .topbar::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--red), var(--gold));
+    }
+    .logoBox {
+      width: 72px;
+      height: 72px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(0,0,0,.3);
+      border: 1px solid rgba(255,255,255,.12);
+      overflow: hidden;
+    }
+    .logoBox img { width: 68px; height: 68px; object-fit: contain; filter: drop-shadow(0 9px 9px rgba(0,0,0,.45)); }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.8vw, 2.4rem);
+      line-height: .95;
+      letter-spacing: -.045em;
+      text-transform: uppercase;
+    }
+    .micro {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: .77rem;
+      font-weight: 800;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: rgba(255,255,255,.075);
+      border: 1px solid rgba(255,255,255,.11);
+      color: #f6efe4;
+      white-space: nowrap;
+    }
+    .topTotals {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) auto auto;
+      gap: 8px;
+      align-items: stretch;
+    }
+    .stat {
+      border-radius: 13px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.11);
+      padding: 8px 10px;
+      min-width: 0;
+    }
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: .66rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .stat strong {
+      display: block;
+      margin-top: 2px;
+      font-family: var(--mono);
+      font-size: clamp(.92rem, 1.45vw, 1.12rem);
+      line-height: 1.05;
+      color: var(--gold);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .btn {
+      border: 0;
+      cursor: pointer;
+      color: #fff;
+      border-radius: 12px;
+      min-height: 36px;
+      padding: 8px 11px;
+      font-weight: 950;
+      font-size: .84rem;
+      letter-spacing: .01em;
+      background: linear-gradient(135deg, var(--red), var(--red-dark));
+      box-shadow: 0 10px 24px rgba(114,8,18,.32);
+      transition: transform .14s ease, filter .14s ease, opacity .14s ease;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
+    .btn:active { transform: none; }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .btn.gold { color: #151008; background: linear-gradient(135deg, #ffdc70, var(--gold)); box-shadow: 0 12px 24px rgba(247,198,74,.22); }
+    .btn.secondary { background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.15); box-shadow: none; }
+    .btn.tiny { min-height: 30px; padding: 5px 9px; font-size: .78rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(480px, 1fr) minmax(390px, .92fr) 330px;
+      gap: 10px;
+      margin-top: 10px;
+      align-items: start;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+    }
+    .cardHead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.055);
+    }
+    .cardHead h2 {
+      margin: 0;
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+    .cardBody { padding: 10px 12px; }
+    .stack { display: grid; gap: 10px; }
+    .notice {
+      border-radius: 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(247,198,74,.34);
+      background: rgba(247,198,74,.105);
+      color: #fff4cf;
+      font-size: .82rem;
+      line-height: 1.3;
+      font-weight: 800;
+    }
+    .notice.danger { border-color: rgba(240,68,68,.34); background: rgba(240,68,68,.12); color: #ffd9d9; }
+    .notice strong { color: #fff; }
+    .invoiceForm {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr .88fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    label {
+      display: grid;
+      gap: 4px;
+      color: var(--muted);
+      font-size: .69rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .055em;
+    }
+    input, select, button { font: inherit; }
+    input, select {
+      width: 100%;
+      min-height: 34px;
+      color: var(--text);
+      background: rgba(255,255,255,.085);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 10px;
+      padding: 7px 9px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: rgba(247,198,74,.66); box-shadow: 0 0 0 3px rgba(247,198,74,.12); }
+    select option { background: #111318; color: #fff; }
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .tableWrap {
+      max-height: calc(100vh - 272px);
+      min-height: 390px;
+      overflow: auto;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px;
+      background: rgba(0,0,0,.16);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,.09); text-align: left; vertical-align: middle; }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: rgba(18,20,24,.98);
+      color: var(--muted);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .065em;
+    }
+    td { font-size: .86rem; }
+    tr:hover td { background: rgba(255,255,255,.045); }
+    .categoryCell { width: 142px; }
+    .priceCell, .lineCell { width: 88px; text-align: right; font-family: var(--mono); font-weight: 900; white-space: nowrap; }
+    .actionCell { width: 58px; text-align: right; }
+    .qtyCell { width: 70px; }
+    .badge {
+      display: inline-flex;
+      max-width: 132px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      border-radius: 999px;
+      padding: 4px 7px;
+      color: #101014;
+      font-size: .65rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .badge.basic { background:#dcefd5; }
+    .badge.full { background:#efdfca; }
+    .badge.useable { background:#cbdcf5; }
+    .badge.after { background:#f2c9ca; }
+    .badge.engine { background:#f6dfbd; }
+    .badge.performance { background:#e8e8e8; }
+    .cartEmpty {
+      padding: 18px 12px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(255,255,255,.17);
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+      font-size: .88rem;
+    }
+    .qty {
+      min-height: 30px;
+      padding: 5px 7px;
+      text-align: center;
+      font-family: var(--mono);
+      font-weight: 900;
+      border-radius: 9px;
+    }
+    .remove {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      border: 1px solid rgba(240,68,68,.36);
+      background: rgba(240,68,68,.15);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 950;
+    }
+    .summaryLines { display: grid; gap: 2px; }
+    .summaryLine {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,.095);
+      color: var(--muted);
+      font-size: .86rem;
+    }
+    .summaryLine strong { color: #fff; font-family: var(--mono); }
+    .summaryLine.total { align-items: center; color: #fff; font-size: .96rem; }
+    .summaryLine.total strong { color: var(--gold); font-size: 1.42rem; }
+    .categoryBreakdown { display: grid; gap: 5px; margin-top: 9px; }
+    .smallRow {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      border-radius: 9px;
+      padding: 6px 8px;
+      background: rgba(255,255,255,.052);
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    .smallRow strong { color: #fff; font-family: var(--mono); white-space: nowrap; }
+    .buttonStack { display: grid; gap: 8px; margin-top: 9px; }
+    .preview {
+      white-space: pre-wrap;
+      line-height: 1.38;
+      color: #ebe8e3;
+      background: rgba(0,0,0,.24);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 11px;
+      padding: 9px;
+      font-family: var(--mono);
+      font-size: .73rem;
+      max-height: 225px;
+      overflow: auto;
+    }
+    details summary {
+      cursor: pointer;
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .errorBox {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      color: #ffdada;
+      background: rgba(240,68,68,.13);
+      border: 1px solid rgba(240,68,68,.32);
+      font-weight: 850;
+      font-size: .84rem;
+    }
+    .toast {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      width: min(380px, calc(100% - 28px));
+      padding: 10px 12px;
+      background: rgba(15,18,22,.95);
+      border: 1px solid rgba(117,224,164,.38);
+      color: #d9ffe8;
+      border-radius: 13px;
+      box-shadow: var(--shadow);
+      transform: translateY(120%);
+      opacity: 0;
+      transition: .2s ease;
+      z-index: 50;
+      font-weight: 850;
+      font-size: .86rem;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    .pageTabs {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(12,14,17,.82);
+      box-shadow: 0 14px 38px rgba(0,0,0,.32);
+      backdrop-filter: blur(10px);
+    }
+    .tabBtn {
+      flex: 1;
+      min-height: 38px;
+      border-radius: 11px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.065);
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .055em;
+      transition: .14s ease;
+    }
+    .tabBtn:hover { color: #fff; background: rgba(255,255,255,.1); }
+    .tabBtn.active {
+      color: #151008;
+      background: linear-gradient(135deg, #ffdc70, var(--gold));
+      border-color: rgba(247,198,74,.62);
+      box-shadow: 0 12px 24px rgba(247,198,74,.16);
+    }
+    .pageView { display: none; }
+    .pageView.active { display: block; }
+    .contractHero {
+      display: grid;
+      grid-template-columns: minmax(420px, 1.05fr) minmax(360px, .95fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .contractBanner {
+      min-height: 132px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(6,7,9,.88), rgba(38,8,12,.62), rgba(6,7,9,.88)),
+        url("assets/backdrop.jpg") center / cover no-repeat;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 126px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      position: relative;
+    }
+    .contractBanner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 1px, transparent 1px 38px);
+    }
+    .contractBanner img { width: 116px; height: 116px; object-fit: contain; filter: drop-shadow(0 14px 18px rgba(0,0,0,.56)); position: relative; z-index: 1; }
+    .contractBannerText { position: relative; z-index: 1; }
+    .contractBannerText h2 {
+      margin: 0;
+      font-size: clamp(1.45rem, 3.2vw, 3rem);
+      line-height: .92;
+      text-transform: uppercase;
+      letter-spacing: -.055em;
+    }
+    .contractBannerText p { margin: 8px 0 0; color: #f5dccb; font-weight: 900; font-size: .88rem; }
+    .instructionGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      height: 100%;
+    }
+    .instructionBox {
+      border: 1px solid rgba(183,15,28,.32);
+      border-radius: 12px;
+      background: rgba(255,255,255,.88);
+      color: #a6363d;
+      padding: 10px;
+      font-size: .86rem;
+      line-height: 1.25;
+      font-weight: 850;
+      box-shadow: 0 10px 30px rgba(0,0,0,.24);
+    }
+    .instructionBox strong { color: #7f151c; }
+    .contractLayout {
+      display: grid;
+      grid-template-columns: minmax(520px, 1fr) 360px;
+      gap: 10px;
+      margin-top: 10px;
+      align-items: start;
+    }
+    .contractForm {
+      display: grid;
+      grid-template-columns: 1.25fr .92fr .95fr .9fr;
+      gap: 8px;
+      align-items: end;
+    }
+    .contractForm.compact { grid-template-columns: 1.2fr 1fr auto auto; margin-bottom: 8px; }
+    .contractActions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .contractBoards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(260px, 1fr));
+      gap: 8px;
+      padding: 10px;
+    }
+    .contractBoard {
+      border: 1px solid rgba(255,255,255,.17);
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(0,0,0,.28);
+      min-width: 0;
+    }
+    .contractBoard.selected { outline: 2px solid rgba(247,198,74,.72); box-shadow: 0 0 0 4px rgba(247,198,74,.13); }
+    .contractBoardHead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 6px 8px;
+      background: #111;
+      border-bottom: 2px solid rgba(255,255,255,.7);
+      color: #fff;
+      font-weight: 950;
+      min-height: 34px;
+    }
+    .contractBoard.selected .contractBoardHead { background: #0f3470; }
+    .contractBoardHead button {
+      border: 1px solid rgba(255,255,255,.3);
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border-radius: 7px;
+      cursor: pointer;
+      min-height: 24px;
+      padding: 2px 7px;
+      font-size: .72rem;
+      font-weight: 900;
+    }
+    .contractTable { table-layout: fixed; }
+    .contractTable th, .contractTable td { padding: 5px 6px; border-color: rgba(255,255,255,.12); font-size: .76rem; }
+    .contractTable th { position: static; color: #f7f7f7; background: rgba(40,42,45,.96); }
+    .contractTable th:nth-child(1), .contractTable td:nth-child(1) { width: 33%; background: rgba(67,120,127,.72); }
+    .contractTable th:nth-child(2), .contractTable td:nth-child(2) { width: 23%; background: rgba(128,18,23,.75); text-align: right; font-family: var(--mono); }
+    .contractTable th:nth-child(3), .contractTable td:nth-child(3) { width: 25%; background: rgba(58,107,43,.75); text-align: right; font-family: var(--mono); }
+    .contractTable th:nth-child(4), .contractTable td:nth-child(4) { width: 19%; background: rgba(105,91,0,.72); }
+    .contractTable tr.deposit td:nth-child(1) { color: #dff9ff; font-weight: 950; }
+    .contractTable tr.blank td { height: 24px; color: transparent; }
+    .contractTable .removeLine {
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.85);
+      cursor: pointer;
+      font-weight: 950;
+      float: right;
+      padding: 0 0 0 4px;
+    }
+    .contractStats { display: grid; gap: 6px; }
+    .miniStat {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 8px;
+      border-radius: 9px;
+      background: rgba(255,255,255,.055);
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 850;
+    }
+    .miniStat strong { color: #fff; font-family: var(--mono); }
+    .miniStat.balance strong { color: var(--gold); }
+
+    @media (max-width: 1240px) {
+      .topbar { grid-template-columns: 68px 1fr; position: relative; top: 0; }
+      .logoBox { width: 64px; height: 64px; }
+      .logoBox img { width: 61px; height: 61px; }
+      .topTotals { grid-column: 1 / -1; }
+      .grid { grid-template-columns: 1fr; }
+      .tableWrap { max-height: 440px; min-height: 300px; }
+    }
+    @media (max-width: 760px) {
+      .app { width: min(100% - 12px, 1400px); padding-top: 6px; }
+      .topbar { grid-template-columns: 56px 1fr; border-radius: 14px; padding: 8px; }
+      .topbar::before { width: 100%; height: 4px; }
+      .logoBox { width: 54px; height: 54px; }
+      .logoBox img { width: 52px; height: 52px; }
+      .topTotals { grid-template-columns: 1fr 1fr; }
+      .topTotals .stat:nth-child(3) { grid-column: span 2; }
+      .topTotals .btn { grid-column: span 1; }
+      .invoiceForm, .toolbar { grid-template-columns: 1fr; }
+      .categoryCell { width: auto; }
+      th:first-child, td:first-child { display: none; }
+      .priceCell { width: 76px; }
+      .cartTable .priceCell { display: none; }
+    }
+
+    @media (max-width: 1240px) {
+      .contractHero, .contractLayout { grid-template-columns: 1fr; }
+      .contractBoards { grid-template-columns: repeat(2, minmax(260px, 1fr)); }
+      .contractForm { grid-template-columns: repeat(2, 1fr); }
+      .contractForm.compact { grid-template-columns: 1fr 1fr auto auto; }
+    }
+    @media (max-width: 760px) {
+      .pageTabs { position: sticky; top: 0; z-index: 18; }
+      .contractHero { gap: 8px; }
+      .contractBanner { grid-template-columns: 76px 1fr; min-height: 96px; padding: 10px; }
+      .contractBanner img { width: 72px; height: 72px; }
+      .instructionGrid, .contractForm, .contractForm.compact { grid-template-columns: 1fr; }
+      .contractBoards { grid-template-columns: 1fr; padding: 8px; }
+    }
+
+    @media print {
+      body::before, body::after, .app { display: none !important; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar" aria-label="JJ's Autobody compact invoice calculator header">
+      <div class="logoBox"><img src="assets/jjs_autobody_main.png" alt="JJ's Autobody logo"></div>
+      <div>
+        <h1>JJ's Autobody Tools</h1>
+        <div class="micro">
+          <span class="chip" id="invoiceIdChip">Invoice</span>
+          <span class="chip">No taxes</span>
+          <span class="chip">30% mechanic commission</span>
+          <span class="chip">RP-only info</span>
+        </div>
+      </div>
+      <div class="topTotals">
+        <div class="stat"><span>Total</span><strong id="topTotal">$0.00</strong></div>
+        <div class="stat"><span>Commission</span><strong id="topCommission">$0.00</strong></div>
+        <div class="stat"><span>Items</span><strong id="topItems">0</strong></div>
+        <button class="btn gold" id="exportPdfTop" type="button">Export PDF</button>
+        <button class="btn secondary" id="copyDiscordTop" type="button">Copy Discord</button>
+      </div>
+    </header>
+
+    <nav class="pageTabs" aria-label="Tool switcher">
+      <button class="tabBtn active" type="button" data-page="invoicePage">Invoice Calculator</button>
+      <button class="tabBtn" type="button" data-page="contractsPage">Company Contracts</button>
+    </nav>
+
+    <section id="invoicePage" class="pageView active">
+
+    <section class="card" style="margin-top:10px;">
+      <div class="cardBody">
+        <div class="notice danger"><strong>RP only:</strong> do not enter real names, real phone numbers, email addresses, dates of birth, addresses, IDs, or any real-life personal information.</div>
+        <div class="invoiceForm">
+          <label>Mechanic in-game / Discord name *<input id="mechanicName" type="text" autocomplete="off" placeholder="Required"></label>
+          <label>Customer in-game name <span style="text-transform:none;font-weight:700;">Optional</span><input id="customerName" type="text" autocomplete="off" placeholder="Optional RP name"></label>
+          <label>Customer in-game phone <span style="text-transform:none;font-weight:700;">Optional</span><input id="customerPhone" type="text" autocomplete="off" placeholder="Optional RP phone"></label>
+        </div>
+        <div class="errorBox" id="errorBox"></div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <section class="card">
+        <div class="cardHead">
+          <h2>Services / Parts</h2>
+          <span class="chip" id="visibleCount">0 shown</span>
+        </div>
+        <div class="cardBody">
+          <div class="toolbar">
+            <label>Search<input id="searchItems" type="search" autocomplete="off" placeholder="brakes, engine, nitrous..."></label>
+            <label>Category<select id="categoryFilter"></select></label>
+          </div>
+          <div class="tableWrap">
+            <table>
+              <thead><tr><th class="categoryCell">Category</th><th>Item</th><th class="priceCell">Price</th><th class="actionCell">Add</th></tr></thead>
+              <tbody id="catalogBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Invoice Items</h2>
+          <button class="btn secondary tiny" id="clearInvoice" type="button">Clear</button>
+        </div>
+        <div class="cardBody">
+          <div id="cartArea"></div>
+        </div>
+      </section>
+
+      <aside class="stack">
+        <section class="card">
+          <div class="cardHead"><h2>Totals</h2></div>
+          <div class="cardBody">
+            <div class="summaryLines">
+              <div class="summaryLine"><span>Subtotal</span><strong id="subtotalOut">$0.00</strong></div>
+              <div class="summaryLine"><span>Tax</span><strong>$0.00</strong></div>
+              <div class="summaryLine total"><span>Total Due</span><strong id="totalOut">$0.00</strong></div>
+              <div class="summaryLine"><span>Mechanic 30%</span><strong id="commissionOut">$0.00</strong></div>
+              <div class="summaryLine"><span>Shop 70%</span><strong id="shopOut">$0.00</strong></div>
+            </div>
+            <div class="categoryBreakdown" id="categoryBreakdown"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHead"><h2>Finish</h2></div>
+          <div class="cardBody">
+            <div class="notice"><strong>Reminder:</strong> export the invoice PDF and post it in Discord when finished so it can be kept for records.</div>
+            <div class="buttonStack">
+              <button class="btn gold" id="exportPdf" type="button">Export PDF Invoice</button>
+              <button class="btn secondary" id="copyDiscord" type="button">Copy Discord Summary</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardBody">
+            <details>
+              <summary>Discord Preview</summary>
+              <pre class="preview" id="discordPreview">Add invoice info and items to build a Discord summary.</pre>
+            </details>
+          </div>
+        </section>
+      </aside>
+    </section>
+
+    </section>
+
+    <section id="contractsPage" class="pageView">
+      <section class="contractHero">
+        <div class="contractBanner">
+          <img src="assets/jjs_autobody_main.png" alt="JJ's Autobody logo">
+          <div class="contractBannerText">
+            <h2>Company Contracts</h2>
+            <p>Compact contract tracker for deposits, upgrade/service lines, running balance, and mechanics.</p>
+          </div>
+        </div>
+        <div class="instructionGrid">
+          <div class="instructionBox">
+            <strong>Contract job tracker</strong><br>
+            Use this as an extra way to track company/department contract jobs. Deposits add to the running balance. Jobs subtract from that balance.
+          </div>
+          <div class="instructionBox">
+            <strong>Quick codes</strong><br>
+            AM = After Market<br>S = Service<br>E = Engine<br>Deposit = balance credit<br>E/AM = Engine + After Market
+          </div>
+        </div>
+      </section>
+
+      <section class="contractLayout">
+        <section class="card">
+          <div class="cardHead">
+            <h2>Contract Controls</h2>
+            <span class="chip" id="selectedContractChip">Selected</span>
+          </div>
+          <div class="cardBody stack">
+            <div class="notice danger"><strong>RP only:</strong> do not enter real names, real phone numbers, email addresses, dates of birth, addresses, IDs, or real-life personal information.</div>
+            <div class="contractForm compact">
+              <label>Active Contract<select id="companySelect"></select></label>
+              <label>Company / Department Name<input id="contractCompanyName" type="text" autocomplete="off" placeholder="Police Department"></label>
+              <button class="btn secondary" id="newContractBoard" type="button">+ New</button>
+              <button class="btn secondary" id="deleteContractBoard" type="button">Delete</button>
+            </div>
+            <div class="contractForm">
+              <label>Upgrade / Service<select id="contractType">
+                <option value="AM">AM - After Market</option>
+                <option value="S">S - Service</option>
+                <option value="E">E - Engine</option>
+                <option value="E/AM">E/AM - Engine + After Market</option>
+                <option value="Deposit">Deposit</option>
+                <option value="Custom">Custom</option>
+              </select></label>
+              <label>Amount<input id="contractAmount" type="number" min="0" step="1" inputmode="decimal" placeholder="7500"></label>
+              <label>Mechanic<input id="contractMechanic" type="text" autocomplete="off" placeholder="In-game / Discord"></label>
+              <label>Note<input id="contractNote" type="text" autocomplete="off" placeholder="Optional note"></label>
+            </div>
+            <div class="contractActions">
+              <button class="btn gold" id="addContractRow" type="button">Add Contract Line</button>
+              <button class="btn secondary" id="quickDeposit" type="button">Set as Deposit</button>
+              <button class="btn secondary" id="clearContractRows" type="button">Clear Selected Rows</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="stack">
+          <section class="card">
+            <div class="cardHead"><h2>Selected Totals</h2></div>
+            <div class="cardBody">
+              <div class="contractStats" id="contractStats"></div>
+              <div class="buttonStack">
+                <button class="btn gold" id="exportContractPdf" type="button">Export Contract PDF</button>
+                <button class="btn secondary" id="copyContractDiscord" type="button">Copy Contract Summary</button>
+              </div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="cardBody">
+              <details open>
+                <summary>Contract Discord Preview</summary>
+                <pre class="preview" id="contractPreview">Select a contract and add lines to build a summary.</pre>
+              </details>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <section class="card" style="margin-top:10px;">
+        <div class="cardHead">
+          <h2>Company Contract Boards</h2>
+          <span class="chip">Spreadsheet-inspired layout</span>
+        </div>
+        <div id="contractBoards" class="contractBoards"></div>
+      </section>
+    </section>
+
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const PRICE_DATA = [
+      { category: "Basic Service", item: "Spark Plugs x4", cents: 20000, badge: "basic" },
+      { category: "Basic Service", item: "Tire replace", cents: 16000, badge: "basic" },
+      { category: "Basic Service", item: "Brakes", cents: 16000, badge: "basic" },
+      { category: "Basic Service", item: "Suspension", cents: 16000, badge: "basic" },
+      { category: "Basic Service", item: "Air Filter", cents: 16000, badge: "basic" },
+      { category: "Basic Service", item: "Clutch", cents: 16000, badge: "basic" },
+      { category: "Basic Service", item: "Engine Oil", cents: 16000, badge: "basic" },
+      { category: "Basic Service", item: "ev coolant", cents: 16000, badge: "basic" },
+      { category: "Basic Service", item: "ev battery", cents: 24000, badge: "basic" },
+      { category: "Full Service", item: "Full Service", cents: 85000, badge: "full" },
+      { category: "Useable", item: "Cleaning kit", cents: 15000, badge: "useable" },
+      { category: "Useable", item: "Repair", cents: 20000, badge: "useable" },
+      { category: "Useable", item: "duct tape", cents: 3000, badge: "useable" },
+      { category: "After Market", item: "Ceramic Brakes", cents: 70000, badge: "after" },
+      { category: "After Market", item: "Drivetrain AWD", cents: 42000, badge: "after" },
+      { category: "After Market", item: "Drivetrain FWD & RWD", cents: 20000, badge: "after" },
+      { category: "After Market", item: "Drift Tuning", cents: 30000, badge: "after" },
+      { category: "After Market", item: "Performance Tires offroad", cents: 50000, badge: "after" },
+      { category: "After Market", item: "Performance Tires semi slick", cents: 35000, badge: "after" },
+      { category: "After Market", item: "Performance Tires slick", cents: 60000, badge: "after" },
+      { category: "After Market", item: "Turbo Charger", cents: 50000, badge: "after" },
+      { category: "After Market", item: "Nitrous Bottle", cents: 850000, badge: "after" },
+      { category: "After Market", item: "Nitrous Kit", cents: 1000000, badge: "after" },
+      { category: "Engine", item: "I4 Engine", cents: 150000, badge: "engine" },
+      { category: "Engine", item: "V6 Engine", cents: 300000, badge: "engine" },
+      { category: "Engine", item: "V8 Engine", cents: 450000, badge: "engine" },
+      { category: "Engine", item: "EV Motor", cents: 90000, badge: "engine" },
+      { category: "Performance & Cosmetic", item: "Respray", cents: 10000, badge: "performance" },
+      { category: "Performance & Cosmetic", item: "Cosmetic/Extras", cents: 10000, badge: "performance" },
+      { category: "Performance & Cosmetic", item: "Xenon/Neon", cents: 15000, badge: "performance" },
+      { category: "Performance & Cosmetic", item: "Tire Smoke", cents: 10000, badge: "performance" },
+      { category: "Performance & Cosmetic", item: "Wheels", cents: 15000, badge: "performance" },
+      { category: "Performance & Cosmetic", item: "Stancer Kit", cents: 15000, badge: "performance" },
+      { category: "Performance & Cosmetic", item: "Performance", cents: 25000, badge: "performance" }
+    ].map((entry, index) => ({ ...entry, id: String(index + 1).padStart(2, "0") }));
+
+    const state = { cart: new Map(), invoiceId: makeInvoiceId(), createdAt: new Date() };
+    const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+    const qs = (selector) => document.querySelector(selector);
+    const catalogBody = qs("#catalogBody");
+    const categoryFilter = qs("#categoryFilter");
+    const searchItems = qs("#searchItems");
+    const cartArea = qs("#cartArea");
+    const errorBox = qs("#errorBox");
+    const toast = qs("#toast");
+
+    function makeInvoiceId() {
+      const d = new Date();
+      const stamp = [d.getFullYear(), String(d.getMonth()+1).padStart(2,"0"), String(d.getDate()).padStart(2,"0"), String(d.getHours()).padStart(2,"0"), String(d.getMinutes()).padStart(2,"0"), String(d.getSeconds()).padStart(2,"0")].join("");
+      return `JJ-${stamp}`;
+    }
+    function formatCents(cents) { return money.format(cents / 100); }
+    function getLineItems() {
+      return [...state.cart.entries()].map(([id, qty]) => {
+        const item = PRICE_DATA.find((entry) => entry.id === id);
+        return { ...item, qty, lineCents: item.cents * qty };
+      });
+    }
+    function getTotals() {
+      const lines = getLineItems();
+      const subtotalCents = lines.reduce((sum, line) => sum + line.lineCents, 0);
+      const commissionCents = Math.round(subtotalCents * 0.30);
+      const shopCents = subtotalCents - commissionCents;
+      const categoryTotals = lines.reduce((acc, line) => {
+        acc[line.category] = (acc[line.category] || 0) + line.lineCents;
+        return acc;
+      }, {});
+      return { lines, subtotalCents, taxCents: 0, totalCents: subtotalCents, commissionCents, shopCents, categoryTotals };
+    }
+    function getMeta() {
+      return {
+        invoiceId: state.invoiceId,
+        createdAt: state.createdAt,
+        mechanicName: qs("#mechanicName").value.trim(),
+        customerName: qs("#customerName").value.trim(),
+        customerPhone: qs("#customerPhone").value.trim()
+      };
+    }
+    function buildCategoryFilter() {
+      const categories = ["All Categories", ...new Set(PRICE_DATA.map((item) => item.category))];
+      categoryFilter.innerHTML = categories.map((cat) => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join("");
+    }
+    function renderCatalog() {
+      const search = searchItems.value.trim().toLowerCase();
+      const category = categoryFilter.value;
+      const filtered = PRICE_DATA.filter((entry) => {
+        const matchesCategory = category === "All Categories" || entry.category === category;
+        const matchesSearch = !search || `${entry.category} ${entry.item}`.toLowerCase().includes(search);
+        return matchesCategory && matchesSearch;
+      });
+      qs("#visibleCount").textContent = `${filtered.length} shown`;
+      catalogBody.innerHTML = filtered.map((entry) => `
+        <tr>
+          <td class="categoryCell"><span class="badge ${entry.badge}">${escapeHtml(entry.category)}</span></td>
+          <td>${escapeHtml(entry.item)}</td>
+          <td class="priceCell">${formatCents(entry.cents)}</td>
+          <td class="actionCell"><button class="btn tiny" type="button" data-add="${entry.id}">+</button></td>
+        </tr>
+      `).join("") || `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:18px;">No matching items found.</td></tr>`;
+      catalogBody.querySelectorAll("[data-add]").forEach((button) => button.addEventListener("click", () => addItem(button.dataset.add)));
+    }
+    function addItem(id) {
+      state.cart.set(id, (state.cart.get(id) || 0) + 1);
+      renderAll();
+      const item = PRICE_DATA.find((entry) => entry.id === id);
+      showToast(`${item.item} added.`);
+    }
+    function updateQty(id, qty) {
+      const cleanQty = Math.max(1, Math.min(99, Number.parseInt(qty, 10) || 1));
+      state.cart.set(id, cleanQty);
+      renderAll();
+    }
+    function removeItem(id) { state.cart.delete(id); renderAll(); }
+    function renderCart() {
+      const { lines } = getTotals();
+      if (!lines.length) {
+        cartArea.innerHTML = `<div class="cartEmpty">No invoice items yet. Add services or parts from the list.</div>`;
+        return;
+      }
+      cartArea.innerHTML = `
+        <div class="tableWrap" style="max-height:calc(100vh - 198px);min-height:390px;">
+          <table class="cartTable">
+            <thead><tr><th>Item</th><th class="priceCell">Each</th><th class="qtyCell">Qty</th><th class="lineCell">Line</th><th class="actionCell"></th></tr></thead>
+            <tbody>${lines.map((line) => `
+              <tr>
+                <td><strong>${escapeHtml(line.item)}</strong><br><span style="color:var(--muted);font-size:.72rem;font-weight:800;text-transform:uppercase;">${escapeHtml(line.category)}</span></td>
+                <td class="priceCell">${formatCents(line.cents)}</td>
+                <td class="qtyCell"><input class="qty" type="number" min="1" max="99" step="1" value="${line.qty}" data-qty="${line.id}" aria-label="Quantity for ${escapeHtml(line.item)}"></td>
+                <td class="lineCell">${formatCents(line.lineCents)}</td>
+                <td class="actionCell"><button class="remove" type="button" data-remove="${line.id}" aria-label="Remove ${escapeHtml(line.item)}">×</button></td>
+              </tr>
+            `).join("")}</tbody>
+          </table>
+        </div>`;
+      cartArea.querySelectorAll("[data-qty]").forEach((input) => input.addEventListener("change", () => updateQty(input.dataset.qty, input.value)));
+      cartArea.querySelectorAll("[data-remove]").forEach((button) => button.addEventListener("click", () => removeItem(button.dataset.remove)));
+    }
+    function renderTotals() {
+      const totals = getTotals();
+      const qty = totals.lines.reduce((sum, line) => sum + line.qty, 0);
+      qs("#subtotalOut").textContent = formatCents(totals.subtotalCents);
+      qs("#totalOut").textContent = formatCents(totals.totalCents);
+      qs("#commissionOut").textContent = formatCents(totals.commissionCents);
+      qs("#shopOut").textContent = formatCents(totals.shopCents);
+      qs("#topTotal").textContent = formatCents(totals.totalCents);
+      qs("#topCommission").textContent = formatCents(totals.commissionCents);
+      qs("#topItems").textContent = String(qty);
+      const breakdown = qs("#categoryBreakdown");
+      const entries = Object.entries(totals.categoryTotals);
+      breakdown.innerHTML = entries.length
+        ? entries.map(([category, cents]) => `<div class="smallRow"><span>${escapeHtml(category)}</span><strong>${formatCents(cents)}</strong></div>`).join("")
+        : `<div class="smallRow"><span>No category totals yet</span><strong>$0.00</strong></div>`;
+    }
+    function buildDiscordSummary() {
+      const meta = getMeta();
+      const totals = getTotals();
+      const lines = [
+        `**JJ's Autobody Invoice ${meta.invoiceId}**`,
+        `Created: ${meta.createdAt.toLocaleString()}`,
+        `Mechanic: ${meta.mechanicName || "[required]"}`,
+        `Customer RP Name: ${meta.customerName || "N/A"}`,
+        `Customer RP Phone: ${meta.customerPhone || "N/A"}`,
+        "",
+        "**Items**"
+      ];
+      if (totals.lines.length) totals.lines.forEach((line) => lines.push(`- ${line.category} | ${line.item} x${line.qty}: ${formatCents(line.lineCents)}`));
+      else lines.push("- No items added yet.");
+      lines.push("", `Subtotal: ${formatCents(totals.subtotalCents)}`, "Tax: $0.00", `Total Due: ${formatCents(totals.totalCents)}`, `Mechanic Commission 30%: ${formatCents(totals.commissionCents)}`, `Shop Portion 70%: ${formatCents(totals.shopCents)}`, "", "Reminder: export the PDF invoice and post it in Discord when finished.");
+      return lines.join("\n");
+    }
+    function renderPreview() { qs("#invoiceIdChip").textContent = state.invoiceId; qs("#discordPreview").textContent = buildDiscordSummary(); }
+    function renderAll() { renderCart(); renderTotals(); renderPreview(); hideError(); }
+    function validateInvoice() {
+      const meta = getMeta();
+      const totals = getTotals();
+      if (!meta.mechanicName) { showError("Mechanic in-game / Discord name is required before exporting or copying the invoice."); qs("#mechanicName").focus(); return false; }
+      if (!totals.lines.length) { showError("Add at least one service or part before exporting the invoice."); return false; }
+      hideError();
+      return true;
+    }
+    function showError(message) { errorBox.textContent = message; errorBox.style.display = "block"; errorBox.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    function hideError() { errorBox.style.display = "none"; errorBox.textContent = ""; }
+    function exportPdf() {
+      if (!validateInvoice()) return;
+      const meta = getMeta();
+      const pdf = buildInvoicePdf(meta, getTotals());
+      downloadBlob(new Blob([pdf], { type: "application/pdf" }), `${meta.invoiceId}_JJs_Autobody_Invoice.pdf`);
+      showToast("PDF invoice exported. Post it in Discord when finished.");
+    }
+    async function copyDiscordSummary() {
+      if (!validateInvoice()) return;
+      const text = buildDiscordSummary();
+      try { await navigator.clipboard.writeText(text); }
+      catch (error) {
+        const fallback = document.createElement("textarea");
+        fallback.value = text;
+        document.body.appendChild(fallback);
+        fallback.select();
+        document.execCommand("copy");
+        fallback.remove();
+      }
+      showToast("Discord summary copied. Remember to attach/post the PDF too.");
+    }
+    function clearInvoice() {
+      if (!confirm("Clear all invoice items and start a fresh invoice number?")) return;
+      state.cart.clear();
+      state.invoiceId = makeInvoiceId();
+      state.createdAt = new Date();
+      qs("#mechanicName").value = "";
+      qs("#customerName").value = "";
+      qs("#customerPhone").value = "";
+      renderAll();
+      showToast("Invoice cleared.");
+    }
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+    function buildInvoicePdf(meta, totals) {
+      const pages = [];
+      let content = "";
+      let y = 0;
+      let pageNo = 0;
+      let rowNo = 0;
+      const cmds = {
+        text: (x, yy, size, value, bold = false) => `BT /${bold ? "F2" : "F1"} ${size} Tf ${x} ${yy} Td (${pdfEscape(value)}) Tj ET\n`,
+        line: (x1, y1, x2, y2) => `${x1} ${y1} m ${x2} ${y2} l S\n`,
+        rect: (x, yy, w, h, r, g, b) => `q ${r} ${g} ${b} rg ${x} ${yy} ${w} ${h} re f Q\n`,
+        stroke: (r, g, b) => `${r} ${g} ${b} RG\n`,
+        fill: (r, g, b) => `${r} ${g} ${b} rg\n`
+      };
+      function startPage(continued = false) {
+        pageNo += 1;
+        content = "";
+        content += cmds.rect(0, 0, 612, 792, 1, 1, 1);
+        content += cmds.rect(0, 752, 612, 40, .08, .08, .09);
+        content += cmds.rect(0, 746, 612, 6, .72, .05, .09);
+        content += cmds.rect(0, 740, 612, 6, .97, .78, .29);
+        content += cmds.fill(0, 0, 0);
+        content += cmds.text(48, 764, 18, "JJ's Autobody", true);
+        content += cmds.text(392, 766, 10, `Invoice ${meta.invoiceId}${continued ? " - continued" : ""}`);
+        y = continued ? 702 : 714;
+        if (!continued) {
+          content += cmds.text(48, 714, 24, "Invoice", true);
+          content += cmds.text(48, 692, 10, `Created: ${meta.createdAt.toLocaleString()}`);
+          content += cmds.text(48, 674, 10, `Mechanic: ${meta.mechanicName}`);
+          content += cmds.text(48, 656, 10, `Customer RP Name: ${meta.customerName || "N/A"}`);
+          content += cmds.text(48, 638, 10, `Customer RP Phone: ${meta.customerPhone || "N/A"}`);
+          content += cmds.text(48, 616, 9, "RP-only invoice. Do not include real-life personal information. No taxes are added.");
+          y = 586;
+        }
+        drawTableHeader();
+      }
+      function drawTableHeader() {
+        content += cmds.rect(48, y, 516, 22, .93, .93, .93);
+        content += cmds.fill(0, 0, 0);
+        content += cmds.text(54, y + 7, 9, "Category", true);
+        content += cmds.text(154, y + 7, 9, "Item", true);
+        content += cmds.text(342, y + 7, 9, "Each", true);
+        content += cmds.text(412, y + 7, 9, "Qty", true);
+        content += cmds.text(472, y + 7, 9, "Line Total", true);
+        y -= 22;
+      }
+      function finishPage() {
+        content += cmds.stroke(.78, .78, .78);
+        content += cmds.line(48, 54, 564, 54);
+        content += cmds.fill(.28, .28, .28);
+        content += cmds.text(48, 36, 8, "Reminder: post the exported PDF invoice in Discord when finished.");
+        content += cmds.text(500, 36, 8, `Page ${pageNo}`);
+        pages.push(content);
+      }
+      function addRow(line) {
+        if (y < 98) { finishPage(); startPage(true); }
+        if (rowNo % 2 === 0) content += cmds.rect(48, y, 516, 20, .985, .985, .985);
+        content += cmds.fill(0, 0, 0);
+        content += cmds.text(54, y + 6, 8, truncate(line.category, 18));
+        content += cmds.text(154, y + 6, 8, truncate(line.item, 33));
+        content += cmds.text(342, y + 6, 8, formatCents(line.cents));
+        content += cmds.text(416, y + 6, 8, String(line.qty));
+        content += cmds.text(472, y + 6, 8, formatCents(line.lineCents));
+        content += cmds.stroke(.86, .86, .86);
+        content += cmds.line(48, y, 564, y);
+        y -= 20;
+        rowNo += 1;
+      }
+      function ensureSpace(required) { if (y < required) { finishPage(); startPage(true); } }
+      startPage(false);
+      totals.lines.forEach(addRow);
+      ensureSpace(250);
+      y -= 18;
+      content += cmds.stroke(.72, .05, .09);
+      content += cmds.line(320, y, 564, y);
+      y -= 24;
+      content += cmds.fill(0, 0, 0);
+      content += cmds.text(336, y, 10, "Subtotal", true); content += cmds.text(472, y, 10, formatCents(totals.subtotalCents), true); y -= 18;
+      content += cmds.text(336, y, 10, "Tax", true); content += cmds.text(472, y, 10, "$0.00", true); y -= 22;
+      content += cmds.rect(320, y - 8, 244, 30, .08, .08, .09);
+      content += cmds.fill(1, 1, 1);
+      content += cmds.text(336, y, 13, "Total Due", true); content += cmds.text(462, y, 13, formatCents(totals.totalCents), true); y -= 34;
+      content += cmds.fill(0, 0, 0);
+      content += cmds.text(336, y, 10, "Mechanic Commission 30%", true); content += cmds.text(472, y, 10, formatCents(totals.commissionCents), true); y -= 18;
+      content += cmds.text(336, y, 10, "Shop Portion 70%", true); content += cmds.text(472, y, 10, formatCents(totals.shopCents), true);
+      y -= 36;
+      content += cmds.text(48, y, 11, "Category Totals", true); y -= 18;
+      Object.entries(totals.categoryTotals).forEach(([category, cents]) => {
+        if (y < 92) { finishPage(); startPage(true); y -= 10; }
+        content += cmds.text(60, y, 9, `${category}: ${formatCents(cents)}`); y -= 16;
+      });
+      y -= 12;
+      content += cmds.rect(48, y - 18, 516, 34, 1, .96, .82);
+      content += cmds.fill(0, 0, 0);
+      content += cmds.text(60, y, 9, "Reminder: export this invoice and post it in Discord when finished for records.", true);
+      finishPage();
+      return assemblePdf(pages);
+    }
+    function assemblePdf(pageStreams) {
+      const objects = [];
+      objects.push("<< /Type /Catalog /Pages 2 0 R >>");
+      objects.push("");
+      objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+      objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+      const pageRefs = [];
+      pageStreams.forEach((stream) => {
+        const streamObj = objects.length + 1;
+        const pageObj = objects.length + 2;
+        objects.push(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
+        objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${streamObj} 0 R >>`);
+        pageRefs.push(`${pageObj} 0 R`);
+      });
+      objects[1] = `<< /Type /Pages /Kids [${pageRefs.join(" ")}] /Count ${pageRefs.length} >>`;
+      let pdf = "%PDF-1.4\n";
+      const offsets = [];
+      objects.forEach((object, index) => {
+        offsets.push(pdf.length);
+        pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+      });
+      const xref = pdf.length;
+      pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+      offsets.forEach((offset) => { pdf += `${String(offset).padStart(10, "0")} 00000 n \n`; });
+      pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+      return pdf;
+    }
+    function pdfEscape(value) {
+      return String(value).normalize("NFKD").replace(/[^\x20-\x7E]/g, "").replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+    }
+    function truncate(value, max) { const text = String(value); return text.length > max ? `${text.slice(0, Math.max(0, max - 3))}...` : text; }
+    function escapeHtml(value) { return String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+    let toastTimer;
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2800);
+    }
+
+    const CONTRACT_STORAGE_KEY = "jjsAutobodyCompanyContractsV2";
+    const CONTRACT_LABELS = {
+      "AM": "After Market",
+      "S": "Service",
+      "E": "Engine",
+      "E/AM": "Engine + After Market",
+      "Deposit": "Deposit",
+      "Custom": "Custom"
+    };
+    const contractState = loadContracts();
+
+    function showPage(pageId) {
+      document.querySelectorAll(".pageView").forEach((page) => page.classList.toggle("active", page.id === pageId));
+      document.querySelectorAll(".tabBtn").forEach((button) => button.classList.toggle("active", button.dataset.page === pageId));
+      if (pageId === "contractsPage") renderContracts();
+    }
+    function makeContractId() { return `contract-${Date.now()}-${Math.random().toString(16).slice(2, 7)}`; }
+    function defaultContracts() {
+      return {
+        selectedId: "contract-police",
+        contracts: [
+          { id: "contract-police", name: "Police Department", rows: [] },
+          { id: "contract-2", name: "N/A", rows: [] },
+          { id: "contract-3", name: "N/A", rows: [] },
+          { id: "contract-4", name: "N/A", rows: [] }
+        ]
+      };
+    }
+    function loadContracts() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(CONTRACT_STORAGE_KEY) || "null");
+        if (saved && Array.isArray(saved.contracts) && saved.contracts.length) return saved;
+      } catch (error) {}
+      return defaultContracts();
+    }
+    function saveContracts() {
+      try { localStorage.setItem(CONTRACT_STORAGE_KEY, JSON.stringify(contractState)); } catch (error) {}
+    }
+    function getSelectedContract() {
+      let contract = contractState.contracts.find((entry) => entry.id === contractState.selectedId);
+      if (!contract) {
+        contract = contractState.contracts[0];
+        contractState.selectedId = contract.id;
+      }
+      return contract;
+    }
+    function parseDollarsToCents(value) {
+      const amount = Number.parseFloat(String(value).replace(/[^0-9.]/g, ""));
+      return Number.isFinite(amount) ? Math.round(amount * 100) : 0;
+    }
+    function getContractLedger(contract) {
+      let balanceCents = 0;
+      let depositCents = 0;
+      let costCents = 0;
+      const mechanicTotals = {};
+      const rows = contract.rows.map((row) => {
+        const isDeposit = row.type === "Deposit";
+        if (isDeposit) {
+          depositCents += row.amountCents;
+          balanceCents += row.amountCents;
+        } else {
+          costCents += row.amountCents;
+          balanceCents -= row.amountCents;
+          const mechanic = (row.mechanic || "Unassigned").trim() || "Unassigned";
+          mechanicTotals[mechanic] = (mechanicTotals[mechanic] || 0) + Math.round(row.amountCents * 0.30);
+        }
+        return { ...row, isDeposit, balanceCents };
+      });
+      return { rows, depositCents, costCents, balanceCents, mechanicTotals };
+    }
+    function renderContracts() {
+      const contract = getSelectedContract();
+      const companySelect = qs("#companySelect");
+      companySelect.innerHTML = contractState.contracts.map((entry, index) => `<option value="${escapeHtml(entry.id)}">${index + 1}. ${escapeHtml(entry.name || "N/A")}</option>`).join("");
+      companySelect.value = contract.id;
+      qs("#contractCompanyName").value = contract.name || "";
+      qs("#selectedContractChip").textContent = contract.name || "Selected";
+      renderContractStats(contract);
+      renderContractBoards();
+      renderContractPreview();
+    }
+    function renderContractStats(contract) {
+      const ledger = getContractLedger(contract);
+      const mechanicTotal = Object.values(ledger.mechanicTotals).reduce((sum, cents) => sum + cents, 0);
+      qs("#contractStats").innerHTML = `
+        <div class="miniStat"><span>Deposits</span><strong>${formatCents(ledger.depositCents)}</strong></div>
+        <div class="miniStat"><span>Job Costs</span><strong>${formatCents(ledger.costCents)}</strong></div>
+        <div class="miniStat balance"><span>Running Balance</span><strong>${formatCents(ledger.balanceCents)}</strong></div>
+        <div class="miniStat"><span>Lines</span><strong>${ledger.rows.length}</strong></div>
+        <div class="miniStat"><span>Estimated 30% Mechanic</span><strong>${formatCents(mechanicTotal)}</strong></div>
+      `;
+    }
+    function renderContractBoards() {
+      const boards = qs("#contractBoards");
+      boards.innerHTML = contractState.contracts.map((contract) => {
+        const ledger = getContractLedger(contract);
+        const rowsHtml = ledger.rows.map((row, index) => `
+          <tr class="${row.isDeposit ? "deposit" : ""}" title="${escapeHtml(row.note || "")}">
+            <td>${escapeHtml(row.type)}${row.note ? " *" : ""}</td>
+            <td>${row.isDeposit ? "" : formatCents(row.amountCents)}</td>
+            <td>${formatCents(row.balanceCents)}</td>
+            <td>${escapeHtml(row.mechanic || "")}${contract.id === contractState.selectedId ? `<button class="removeLine" type="button" data-remove-contract-row="${contract.id}:${index}" aria-label="Remove line">×</button>` : ""}</td>
+          </tr>
+        `).join("");
+        const blanksNeeded = Math.max(0, 12 - ledger.rows.length);
+        const blanks = Array.from({ length: blanksNeeded }, () => `<tr class="blank"><td>.</td><td>.</td><td>.</td><td>.</td></tr>`).join("");
+        return `
+          <section class="contractBoard ${contract.id === contractState.selectedId ? "selected" : ""}">
+            <div class="contractBoardHead"><span>${escapeHtml(contract.name || "N/A")}</span><button type="button" data-select-contract="${escapeHtml(contract.id)}">Use</button></div>
+            <table class="contractTable">
+              <thead><tr><th>Upgrade/Service</th><th>Cost</th><th>Balance</th><th>Mechanic</th></tr></thead>
+              <tbody>${rowsHtml}${blanks}</tbody>
+            </table>
+          </section>
+        `;
+      }).join("");
+      boards.querySelectorAll("[data-select-contract]").forEach((button) => button.addEventListener("click", () => {
+        contractState.selectedId = button.dataset.selectContract;
+        saveContracts();
+        renderContracts();
+      }));
+      boards.querySelectorAll("[data-remove-contract-row]").forEach((button) => button.addEventListener("click", () => {
+        const [contractId, rowIndex] = button.dataset.removeContractRow.split(":");
+        const contract = contractState.contracts.find((entry) => entry.id === contractId);
+        if (!contract) return;
+        contract.rows.splice(Number(rowIndex), 1);
+        saveContracts();
+        renderContracts();
+        showToast("Contract line removed.");
+      }));
+    }
+    function addContractLine() {
+      const contract = getSelectedContract();
+      const type = qs("#contractType").value;
+      const amountCents = parseDollarsToCents(qs("#contractAmount").value);
+      const mechanic = qs("#contractMechanic").value.trim();
+      const note = qs("#contractNote").value.trim();
+      if (!amountCents) { showToast("Enter a contract amount first."); qs("#contractAmount").focus(); return; }
+      if (type !== "Deposit" && !mechanic) { showToast("Enter the mechanic in-game / Discord name for job lines."); qs("#contractMechanic").focus(); return; }
+      contract.rows.push({ type, amountCents, mechanic: type === "Deposit" ? "" : mechanic, note, createdAt: new Date().toISOString() });
+      qs("#contractAmount").value = "";
+      qs("#contractNote").value = "";
+      saveContracts();
+      renderContracts();
+      showToast(type === "Deposit" ? "Deposit added to contract balance." : "Contract job line added.");
+    }
+    function updateContractName() {
+      const contract = getSelectedContract();
+      contract.name = qs("#contractCompanyName").value.trim() || "N/A";
+      saveContracts();
+      renderContracts();
+    }
+    function addContractBoard() {
+      const contract = { id: makeContractId(), name: "N/A", rows: [] };
+      contractState.contracts.push(contract);
+      contractState.selectedId = contract.id;
+      saveContracts();
+      renderContracts();
+      qs("#contractCompanyName").focus();
+      showToast("New contract board added.");
+    }
+    function deleteSelectedContractBoard() {
+      if (contractState.contracts.length <= 1) { showToast("Keep at least one contract board."); return; }
+      const contract = getSelectedContract();
+      if (!confirm(`Delete the ${contract.name || "selected"} contract board?`)) return;
+      contractState.contracts = contractState.contracts.filter((entry) => entry.id !== contract.id);
+      contractState.selectedId = contractState.contracts[0].id;
+      saveContracts();
+      renderContracts();
+      showToast("Contract board deleted.");
+    }
+    function clearSelectedContractRows() {
+      const contract = getSelectedContract();
+      if (!contract.rows.length) { showToast("Selected contract has no rows to clear."); return; }
+      if (!confirm(`Clear all rows for ${contract.name || "selected contract"}?`)) return;
+      contract.rows = [];
+      saveContracts();
+      renderContracts();
+      showToast("Selected contract rows cleared.");
+    }
+    function buildContractDiscordSummary(contract = getSelectedContract()) {
+      const ledger = getContractLedger(contract);
+      const lines = ledger.rows.map((row, index) => {
+        const label = CONTRACT_LABELS[row.type] || row.type;
+        const amountLabel = row.isDeposit ? `deposit ${formatCents(row.amountCents)}` : `cost ${formatCents(row.amountCents)}`;
+        const mechanic = row.mechanic ? ` | mechanic: ${row.mechanic}` : "";
+        const note = row.note ? ` | note: ${row.note}` : "";
+        return `${index + 1}. ${row.type} (${label}) - ${amountLabel} | balance: ${formatCents(row.balanceCents)}${mechanic}${note}`;
+      }).join("\n") || "No contract lines yet.";
+      return `**JJ's Autobody Company Contract**\nCompany: ${contract.name || "N/A"}\nDeposits: ${formatCents(ledger.depositCents)}\nJob Costs: ${formatCents(ledger.costCents)}\nRunning Balance: ${formatCents(ledger.balanceCents)}\n\n${lines}\n\nReminder: export the contract PDF and post it in Discord when finished for records.`;
+    }
+    function renderContractPreview() { qs("#contractPreview").textContent = buildContractDiscordSummary(); }
+    async function copyContractDiscordSummary() {
+      const text = buildContractDiscordSummary();
+      try { await navigator.clipboard.writeText(text); }
+      catch (error) {
+        const fallback = document.createElement("textarea");
+        fallback.value = text;
+        document.body.appendChild(fallback);
+        fallback.select();
+        document.execCommand("copy");
+        fallback.remove();
+      }
+      showToast("Contract summary copied. Remember to attach/post the PDF too.");
+    }
+    function exportContractPdf() {
+      const contract = getSelectedContract();
+      const pdf = buildContractPdf(contract);
+      const safeName = (contract.name || "Company_Contract").replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "") || "Company_Contract";
+      downloadBlob(new Blob([pdf], { type: "application/pdf" }), `${safeName}_JJs_Autobody_Contract.pdf`);
+      showToast("Contract PDF exported. Post it in Discord when finished.");
+    }
+    function buildContractPdf(contract) {
+      const ledger = getContractLedger(contract);
+      const pages = [];
+      let content = "";
+      let y = 0;
+      let pageNo = 0;
+      let rowNo = 0;
+      const cmds = {
+        text: (x, yy, size, value, bold = false) => `BT /${bold ? "F2" : "F1"} ${size} Tf ${x} ${yy} Td (${pdfEscape(value)}) Tj ET\n`,
+        line: (x1, y1, x2, y2) => `${x1} ${y1} m ${x2} ${y2} l S\n`,
+        rect: (x, yy, w, h, r, g, b) => `q ${r} ${g} ${b} rg ${x} ${yy} ${w} ${h} re f Q\n`,
+        stroke: (r, g, b) => `${r} ${g} ${b} RG\n`,
+        fill: (r, g, b) => `${r} ${g} ${b} rg\n`
+      };
+      function startPage(continued = false) {
+        pageNo += 1;
+        content = "";
+        content += cmds.rect(0, 0, 612, 792, 1, 1, 1);
+        content += cmds.rect(0, 752, 612, 40, .08, .08, .09);
+        content += cmds.rect(0, 746, 612, 6, .72, .05, .09);
+        content += cmds.rect(0, 740, 612, 6, .97, .78, .29);
+        content += cmds.fill(0, 0, 0);
+        content += cmds.text(48, 764, 18, "JJ's Autobody", true);
+        content += cmds.text(386, 766, 10, `Company Contract${continued ? " - continued" : ""}`);
+        y = continued ? 704 : 714;
+        if (!continued) {
+          content += cmds.text(48, 714, 24, "Company Contract", true);
+          content += cmds.text(48, 692, 10, `Company / Department: ${contract.name || "N/A"}`);
+          content += cmds.text(48, 674, 10, `Exported: ${new Date().toLocaleString()}`);
+          content += cmds.text(48, 654, 9, "RP-only tracker. Do not include real-life personal information.");
+          content += cmds.text(336, 692, 10, `Deposits: ${formatCents(ledger.depositCents)}`, true);
+          content += cmds.text(336, 674, 10, `Job Costs: ${formatCents(ledger.costCents)}`, true);
+          content += cmds.text(336, 656, 10, `Running Balance: ${formatCents(ledger.balanceCents)}`, true);
+          y = 616;
+        }
+        drawHeader();
+      }
+      function drawHeader() {
+        content += cmds.rect(48, y, 516, 22, .93, .93, .93);
+        content += cmds.fill(0, 0, 0);
+        content += cmds.text(54, y + 7, 9, "Upgrade/Service", true);
+        content += cmds.text(178, y + 7, 9, "Cost", true);
+        content += cmds.text(262, y + 7, 9, "Balance", true);
+        content += cmds.text(352, y + 7, 9, "Mechanic", true);
+        content += cmds.text(452, y + 7, 9, "Note", true);
+        y -= 22;
+      }
+      function finishPage() {
+        content += cmds.stroke(.78, .78, .78);
+        content += cmds.line(48, 54, 564, 54);
+        content += cmds.fill(.28, .28, .28);
+        content += cmds.text(48, 36, 8, "Reminder: post the exported contract PDF in Discord when finished.");
+        content += cmds.text(500, 36, 8, `Page ${pageNo}`);
+        pages.push(content);
+      }
+      function addLedgerRow(row) {
+        if (y < 92) { finishPage(); startPage(true); }
+        if (rowNo % 2 === 0) content += cmds.rect(48, y, 516, 20, .985, .985, .985);
+        content += cmds.fill(0, 0, 0);
+        content += cmds.text(54, y + 6, 8, row.type);
+        content += cmds.text(178, y + 6, 8, row.isDeposit ? "" : formatCents(row.amountCents));
+        content += cmds.text(262, y + 6, 8, formatCents(row.balanceCents));
+        content += cmds.text(352, y + 6, 8, truncate(row.mechanic || "", 16));
+        content += cmds.text(452, y + 6, 8, truncate(row.note || "", 19));
+        content += cmds.stroke(.86, .86, .86);
+        content += cmds.line(48, y, 564, y);
+        y -= 20;
+        rowNo += 1;
+      }
+      startPage(false);
+      if (ledger.rows.length) ledger.rows.forEach(addLedgerRow);
+      else {
+        content += cmds.text(54, y + 4, 10, "No contract lines have been added yet.");
+        y -= 30;
+      }
+      if (y < 210) { finishPage(); startPage(true); }
+      y -= 24;
+      content += cmds.stroke(.72, .05, .09);
+      content += cmds.line(320, y, 564, y);
+      y -= 24;
+      content += cmds.fill(0, 0, 0);
+      content += cmds.text(336, y, 10, "Deposits", true); content += cmds.text(472, y, 10, formatCents(ledger.depositCents), true); y -= 18;
+      content += cmds.text(336, y, 10, "Job Costs", true); content += cmds.text(472, y, 10, formatCents(ledger.costCents), true); y -= 22;
+      content += cmds.rect(320, y - 8, 244, 30, .08, .08, .09);
+      content += cmds.fill(1, 1, 1);
+      content += cmds.text(336, y, 13, "Running Balance", true); content += cmds.text(462, y, 13, formatCents(ledger.balanceCents), true); y -= 42;
+      content += cmds.fill(0, 0, 0);
+      content += cmds.text(48, y, 11, "Mechanic 30% Estimates", true); y -= 18;
+      Object.entries(ledger.mechanicTotals).forEach(([mechanic, cents]) => {
+        if (y < 92) { finishPage(); startPage(true); }
+        content += cmds.text(60, y, 9, `${mechanic}: ${formatCents(cents)}`);
+        y -= 16;
+      });
+      finishPage();
+      return assemblePdf(pages);
+    }
+
+    buildCategoryFilter();
+    renderCatalog();
+    renderAll();
+    ["#mechanicName", "#customerName", "#customerPhone"].forEach((selector) => qs(selector).addEventListener("input", renderPreview));
+    searchItems.addEventListener("input", renderCatalog);
+    categoryFilter.addEventListener("change", renderCatalog);
+    qs("#exportPdf").addEventListener("click", exportPdf);
+    qs("#exportPdfTop").addEventListener("click", exportPdf);
+    qs("#copyDiscord").addEventListener("click", copyDiscordSummary);
+    qs("#copyDiscordTop").addEventListener("click", copyDiscordSummary);
+    qs("#clearInvoice").addEventListener("click", clearInvoice);
+
+    document.querySelectorAll(".tabBtn").forEach((button) => button.addEventListener("click", () => showPage(button.dataset.page)));
+    qs("#companySelect").addEventListener("change", () => { contractState.selectedId = qs("#companySelect").value; saveContracts(); renderContracts(); });
+    qs("#contractCompanyName").addEventListener("change", updateContractName);
+    qs("#contractCompanyName").addEventListener("blur", updateContractName);
+    qs("#addContractRow").addEventListener("click", addContractLine);
+    qs("#quickDeposit").addEventListener("click", () => { qs("#contractType").value = "Deposit"; qs("#contractAmount").focus(); });
+    qs("#newContractBoard").addEventListener("click", addContractBoard);
+    qs("#deleteContractBoard").addEventListener("click", deleteSelectedContractBoard);
+    qs("#clearContractRows").addEventListener("click", clearSelectedContractRows);
+    qs("#exportContractPdf").addEventListener("click", exportContractPdf);
+    qs("#copyContractDiscord").addEventListener("click", copyContractDiscordSummary);
+    renderContracts();
+
+  </script>
+</body>
+</html>
